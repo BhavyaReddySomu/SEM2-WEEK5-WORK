@@ -1,0 +1,197 @@
+db.createCollection("Employees")
+db.createCollection("Departments")
+db.createCollection("Salaries")
+db.createCollection("Attendance")
+{ ok: 1 }
+db.Employees.insertMany([
+    {
+        EmployeeID: 1,
+        FirstName: "Bhavya",
+        LastName: "Honey",
+        DateOfBirth: new Date("1990-05-15"),
+        Department: "HR",
+        JobTitle: "Manager"
+    },
+    {
+        EmployeeID: 2,
+        FirstName: "Bhavi",
+        LastName: "Somu",
+        DateOfBirth: new Date("1985-08-30"),
+        Department: "IT",
+        JobTitle: "Developer"
+    },
+    {
+        EmployeeID: 3,
+        FirstName: "Chintu",
+        LastName: "Sruthi",
+        DateOfBirth: new Date("1992-12-01"),
+        Department: "Finance",
+        JobTitle: "Analyst"
+    }
+    
+])
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('6727aaa2f747d304a1b3d56f'),
+    '1': ObjectId('6727aaa2f747d304a1b3d570'),
+    '2': ObjectId('6727aaa2f747d304a1b3d571')
+  }
+}
+db.Employees.find({ Department: "IT" })
+{
+  _id: ObjectId('6727a4fad73d348490ddf09b'),
+  EmployeeID: 2,
+  FirstName: 'Jane',
+  LastName: 'Smith',
+  DateOfBirth: 1985-05-22T00:00:00.000Z,
+  Department: 'IT'
+}
+{
+  _id: ObjectId('6727aaa2f747d304a1b3d570'),
+  EmployeeID: 2,
+  FirstName: 'Bhavi',
+  LastName: 'Somu',
+  DateOfBirth: 1985-08-30T00:00:00.000Z,
+  Department: 'IT',
+  JobTitle: 'Developer'
+}
+db.Salaries.updateOne(
+    { EmployeeID: 2 }, // Assuming EmployeeID 2 is the one to update
+    { $set: { Salary: 80000 } }
+)
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 0,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+db.Employees.deleteMany({ isActive: false })
+{
+  acknowledged: true,
+  deletedCount: 0
+}
+db.Employees.find({
+    Department: "HR",
+    DateOfBirth: { $lt: new Date(new Date().setFullYear(new Date().getFullYear() - 30)) }
+})
+{
+  _id: ObjectId('6727a6c8098ca23a7bc9ca7f'),
+  EmployeeID: 1,
+  FirstName: 'Alice',
+  LastName: 'Johnson',
+  DateOfBirth: 1990-01-15T00:00:00.000Z,
+  Department: 'HR'
+}
+{
+  _id: ObjectId('6727aaa2f747d304a1b3d56f'),
+  EmployeeID: 1,
+  FirstName: 'Bhavya',
+  LastName: 'Honey',
+  DateOfBirth: 1990-05-15T00:00:00.000Z,
+  Department: 'HR',
+  JobTitle: 'Manager'
+}
+db.Employees.find({
+    $or: [
+        { JobTitle: "Manager" },
+        { Salary: { $gt: 60000 } } // Assuming Salary is included in Employees
+    ]
+})
+{
+  _id: ObjectId('6727aaa2f747d304a1b3d56f'),
+  EmployeeID: 1,
+  FirstName: 'Bhavya',
+  LastName: 'Honey',
+  DateOfBirth: 1990-05-15T00:00:00.000Z,
+  Department: 'HR',
+  JobTitle: 'Manager'
+}
+db.Employees.find({}).sort({ LastName: 1 })
+{
+  _id: ObjectId('6727a621098ca23a7bc9ca7b'),
+  EmployeeID: 1,
+  FirstName: 'Bhavya',
+  LastName: 'Bhav',
+  DateOfBirth: 1990-01-15T00:00:00.000Z,
+  Department: 'CSE'
+}
+{
+  _id: ObjectId('6727a621098ca23a7bc9ca7c'),
+  EmployeeID: 2,
+  FirstName: 'Honey',
+  LastName: 'Hanii',
+  DateOfBirth: 1985-05-22T00:00:00.000Z,
+  Department: 'CSM'
+}
+{
+  _id: ObjectId('6727aaa2f747d304a1b3d56f'),
+  EmployeeID: 1,
+  FirstName: 'Bhavya',
+  LastName: 'Honey',
+  DateOfBirth: 1990-05-15T00:00:00.000Z,
+  Department: 'HR',
+  JobTitle: 'Manager'
+}
+{
+  _id: ObjectId('6727a6c8098ca23a7bc9ca7f'),
+  EmployeeID: 1,
+  FirstName: 'Alice',
+  LastName: 'Johnson',
+  DateOfBirth: 1990-01-15T00:00:00.000Z,
+  Department: 'HR'
+}
+{
+  _id: ObjectId('6727a4fad73d348490ddf09b'),
+  EmployeeID: 2,
+  FirstName: 'Jane',
+  LastName: 'Smith',
+  DateOfBirth: 1985-05-22T00:00:00.000Z,
+  Department: 'IT'
+}
+{
+  _id: ObjectId('6727aaa2f747d304a1b3d570'),
+  EmployeeID: 2,
+  FirstName: 'Bhavi',
+  LastName: 'Somu',
+  DateOfBirth: 1985-08-30T00:00:00.000Z,
+  Department: 'IT',
+  JobTitle: 'Developer'
+}
+{
+  _id: ObjectId('6727aaa2f747d304a1b3d571'),
+  EmployeeID: 3,
+  FirstName: 'Chintu',
+  LastName: 'Sruthi',
+  DateOfBirth: 1992-12-01T00:00:00.000Z,
+  Department: 'Finance',
+  JobTitle: 'Analyst'
+}
+db.Salaries.aggregate([
+    {
+        $group: {
+            _id: null,
+            averageSalary: { $avg: "$Salary" }
+        }
+    }
+])
+db.Employees.aggregate([
+    {
+        $lookup: {
+            from: "Salaries",
+            localField: "EmployeeID",
+            foreignField: "EmployeeID",
+            as: "salaryInfo"
+        }
+    },
+    {
+        $unwind: "$salaryInfo"
+    },
+    {
+        $group: {
+            _id: "$Department",
+            totalSalaries: { $sum: "$salaryInfo.Salary" }
+        }
+    }
+])
